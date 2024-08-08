@@ -26,9 +26,9 @@ public class HelloServlet extends HttpServlet {
 
             if (connection != null) {
                 Statement statement = connection.createStatement();
-                String createTable = "CREATE TABLE IF NOT EXISTS students (id INTEGER PRIMARY KEY, name TEXT)";
+//                String createTable = "CREATE TABLE IF NOT EXISTS students (id INTEGER PRIMARY KEY, name TEXT)";
 
-                statement.executeUpdate(createTable);
+//                statement.executeUpdate(createTable);
             }
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
