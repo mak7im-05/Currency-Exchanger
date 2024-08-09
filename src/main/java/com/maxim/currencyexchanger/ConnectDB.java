@@ -4,13 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBUtils {
+public class ConnectDB {
 
     private Connection connection;
 
-    public DBUtils() throws ClassNotFoundException {
+    public ConnectDB() throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
-        String url = "jdbc:sqlite:C:/D/study/CurrencyExchanger/src/main/java/com/maxim/currencyexchanger/mydb.db";
+        String url = "jdbc:sqlite:C:/D/study/CurrencyExchanger/src/main/resources/mydb.db";
         try {
             connection = DriverManager.getConnection(url);
             System.out.println("Success");
