@@ -33,17 +33,19 @@ public class DAO {
 
     }
 
-    public Currency getCurrency(int id) {
-        Currency currency = new Currency();
-        String SELECT = "SELECT * FROM Currencies WHERE id = ?";
+    public Currency getCurrency(String code) {
+        Currency currency = null;
+        String query = "SELECT * FROM Currencies WHERE Code = ?";
         try {
-            PreparedStatement statement = connection.prepareStatement(SELECT);
-            statement.setInt(1, id);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, code);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                currency.setCode(rs.getString("Code"));
-                currency.setFullName(rs.getString("FullName"));
-                currency.setSign(rs.getString("Sign"));
+                currency = new Currency(
+                        rs.getInt("ID"),
+                        rs.getString("Code"),
+                        rs.getString("FullName"),
+                        rs.getString("Sign"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

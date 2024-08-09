@@ -2,9 +2,7 @@ package com.maxim.currencyexchanger.servlets;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.maxim.currencyexchanger.model.Currency;
@@ -16,25 +14,27 @@ import jakarta.servlet.annotation.*;
 @WebServlet(name = "CurrenciesServlet", value = "/currencies")
 public class CurrenciesServlet extends HttpServlet {
 
-
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        DAO dao = new DAO();
         Gson gson = new Gson();
         try {
-            List<Currency>currencies = dao.getCurrencies(); // получаем список валют
-            String usersJson = gson.toJson(currencies); // переводим в json формат
-            response.getWriter().write(usersJson);
+            DAO dao = new DAO();
+            List<Currency> currencies = dao.getCurrencies();
+            String currenciesJson = gson.toJson(currencies);
+            response.setStatus(200);
+            response.getWriter().write(currenciesJson);
         } catch (SQLException e) {
             e.printStackTrace();
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "database not avaible");
-            String errorJson = gson.toJson(errorResponse);
-
-            response.setStatus(500);
-            response.getWriter().write(errorJson);
+            sendErrorResponse(response, 500, "{Database not avaible.}", gson);
         }
-        }
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, int statusCode, String message, Gson gson) throws IOException {
+        response.setStatus(statusCode);
+
+        String jsonErrorResponse = gson.toJson(message);
+        response.getWriter().write(jsonErrorResponse);
+    }
 }
+
