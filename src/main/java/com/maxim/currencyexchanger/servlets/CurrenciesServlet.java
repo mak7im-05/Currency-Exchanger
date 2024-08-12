@@ -1,40 +1,63 @@
 package com.maxim.currencyexchanger.servlets;
 
 import java.io.*;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.List;
 
 import com.google.gson.Gson;
-import com.maxim.currencyexchanger.model.Currency;
+import com.maxim.currencyexchanger.ResponseGenerator;
+import com.maxim.currencyexchanger.model.CurrencyDTO;
 
-import com.maxim.currencyexchanger.DAO.DAO;
+import com.maxim.currencyexchanger.DAO.CurrenciesDAO;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
-@WebServlet(name = "CurrenciesServlet", value = "/currencies")
+@WebServlet(name = "CurrenciesServlet", value = "/currencies/*")
 public class CurrenciesServlet extends HttpServlet {
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        Gson gson = new Gson();
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ResponseGenerator responseGenerator = new ResponseGenerator(response, request);
+        CurrencyDTO currency = null;
         try {
-            DAO dao = new DAO();
-            List<Currency> currencies = dao.getCurrencies();
-            String currenciesJson = gson.toJson(currencies);
-            response.setStatus(200);
-            response.getWriter().write(currenciesJson);
+            CurrenciesDAO dao = new CurrenciesDAO();
+
+            String name = request.getParameter("name");
+            String code = request.getParameter("code");
+            String sign = request.getParameter("sign");
+
+
+            if (name == null || code == null || sign == null) { //проверка полей параметров
+                responseGenerator.misField();
+                return;
+            }
+
+            currency = new CurrencyDTO(0, name, code, sign);
+
+            CurrencyDTO createdCurrency = dao.createCurrency(currency);
+
+            responseGenerator.responseGenerator(createdCurrency);
         } catch (SQLException e) {
-            e.printStackTrace();
-            sendErrorResponse(response, 500, "{Database not avaible.}", gson);
+            if (currency.getId() == -1) {
+                responseGenerator.currencyIsAlreadyExists();
+            } else {
+                responseGenerator.DBisNotFound();
+            }
         }
     }
 
-    private void sendErrorResponse(HttpServletResponse response, int statusCode, String message, Gson gson) throws IOException {
-        response.setStatus(statusCode);
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ResponseGenerator responseGenerator = new ResponseGenerator(response, request);
+        try {
+            CurrenciesDAO dao = new CurrenciesDAO();
 
-        String jsonErrorResponse = gson.toJson(message);
-        response.getWriter().write(jsonErrorResponse);
+            List<CurrencyDTO> currencies = dao.getCurrencies();
+
+            responseGenerator.responseGenerator(currencies);
+        } catch (SQLException e) {
+            responseGenerator.DBisNotFound();
+        }
     }
+
 }
 

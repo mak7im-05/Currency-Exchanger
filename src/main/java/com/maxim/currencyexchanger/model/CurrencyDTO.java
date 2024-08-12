@@ -1,17 +1,15 @@
 package com.maxim.currencyexchanger.model;
 
-public class Currency {
-    int id;
-    String code;
-    String fullName;
-    String sign;
+public class CurrencyDTO {
+    private int id;
+    private String name;
+    private String code;
+    private String sign;
 
-    public Currency() {}
-
-    public Currency(int id, String code, String fullName, String sign) {
+    public CurrencyDTO(int id, String fullName, String code, String sign) {
         this.id = id;
+        this.name = fullName;
         this.code = code;
-        this.fullName = fullName;
         this.sign = sign;
     }
 
@@ -19,8 +17,8 @@ public class Currency {
         return code;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
     public String getSign() {
@@ -31,20 +29,30 @@ public class Currency {
         this.code = code;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setSign(String sign) {
         this.sign = sign;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Currency{" +
                 "code='" + code + '\'' +
-                ", fullName='" + fullName + '\'' +
+                ", name='" + name + '\'' +
                 ", sign='" + sign + '\'' +
                 '}';
     }
+
+
 }
