@@ -12,7 +12,7 @@ public class ResponseGenerator {
     private final HttpServletResponse resp;
     Gson gson;
 
-    public ResponseGenerator(HttpServletResponse res, HttpServletRequest req) {
+    public ResponseGenerator(HttpServletResponse res) {
         this.resp = res;
         this.resp.setContentType("application/json");
         this.resp.setCharacterEncoding("UTF-8");
@@ -38,7 +38,7 @@ public class ResponseGenerator {
     }
 
     public void currencyIsAlreadyExists() throws IOException {
-        ErrorMessageDTO err = new ErrorMessageDTO("Валюта с таким кодом уже уществует");
+        ErrorMessageDTO err = new ErrorMessageDTO("Валюта/Валютная пара с таким кодом уже уществует");
         String errJson = gson.toJson(err);
 
         resp.setStatus(409);
@@ -79,6 +79,16 @@ public class ResponseGenerator {
 
     public void exRatesNotFound() throws IOException {
         ErrorMessageDTO err = new ErrorMessageDTO("Обменный курс для пары не найден");
+        String errJson = gson.toJson(err);
+
+        resp.setStatus(404);
+        PrintWriter out = resp.getWriter();
+        out.print(errJson);
+        out.flush();
+    }
+
+    public void currencyPairIsNotExist() throws IOException {
+        ErrorMessageDTO err = new ErrorMessageDTO("Одна (или обе) валюта из валютной пары не существует в БД");
         String errJson = gson.toJson(err);
 
         resp.setStatus(404);

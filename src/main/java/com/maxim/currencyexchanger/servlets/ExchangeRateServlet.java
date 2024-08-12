@@ -16,7 +16,7 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response, request);
+        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         ExchangeRatesDAO dao = null;
         try {
             dao = new ExchangeRatesDAO();

@@ -16,7 +16,7 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        responseGenerator = new ResponseGenerator(response, request);
+        responseGenerator = new ResponseGenerator(response);
         CurrenciesDAO dao = null;
         try {
             dao = new CurrenciesDAO();

@@ -83,7 +83,57 @@ public class ExchangeRatesDAO {
         }
 
         return exRate;
+    }
 
+    public ExchangeRatesDTO createExchangeRate(ExchangeRatesDTO exRate) throws SQLException {
+
+        CurrencyDTO baseCurrency = getCurrencyByCode(exRate.getBaseCurrency().getCode());
+        CurrencyDTO targetCurrency = getCurrencyByCode(exRate.getTargetCurrency().getCode());
+
+        if (baseCurrency == null || targetCurrency == null) {
+            throw new SQLException();
+        }
+
+        exRate.setId(-1); // Одна (или обе) валюта из валютной пары не существует в БД - 404
+
+        String queryCreate = "INSERT INTO ExchangeRates (BaseCurrencyID, TargetCurrencyID, Rate) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement statement = connection.prepareStatement(queryCreate);
+
+            exRate.setId(-2); // Ошибка (например, база данных недоступна) - 500
+
+
+            statement.setInt(1, baseCurrency.getId());
+            statement.setInt(2, targetCurrency.getId());
+            statement.setBigDecimal(3, exRate.getRate());
+            statement.executeUpdate();
+
+            ResultSet generateId = statement.getGeneratedKeys();
+
+            exRate.setId(generateId.getInt(1));
+            exRate.setBaseCurrency(baseCurrency);
+            exRate.setTargetCurrency(targetCurrency);
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+
+        return exRate;
+    }
+
+    public CurrencyDTO getCurrencyByCode(String code) throws SQLException {
+        CurrencyDTO currency = null;
+        String query = "SELECT * FROM Currencies WHERE Code = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, code);
+        ResultSet rs = statement.executeQuery();
+        if (rs.next()) {
+            currency = new CurrencyDTO(
+                    rs.getInt(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4));
+        }
+        return currency;
     }
 }
 

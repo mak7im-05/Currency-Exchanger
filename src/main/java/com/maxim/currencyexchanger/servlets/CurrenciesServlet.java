@@ -18,7 +18,7 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response, request);
+        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         CurrencyDTO currency = null;
         CurrenciesDAO dao = null;
         try {
@@ -44,13 +44,14 @@ public class CurrenciesServlet extends HttpServlet {
             } else {
                 responseGenerator.DBisNotFound();
             }
+        } finally {
+            dao.closeConnection();
         }
-        dao.closeConnection();
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response, request);
+        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         CurrenciesDAO dao = null;
         try {
             dao = new CurrenciesDAO();

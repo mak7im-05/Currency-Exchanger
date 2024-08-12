@@ -69,7 +69,7 @@ public class CurrenciesDAO {
     }
 
     public CurrencyDTO createCurrency(CurrencyDTO currency) throws SQLException {
-        String CREATE = "INSERT INO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
+        String CREATE = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(CREATE);
 
         currency.setId(-1); // для отслеживания exceptions (если -1 -> тогда валюта уже существует, иначе база данных сломалась)
