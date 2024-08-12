@@ -16,16 +16,17 @@ import jakarta.servlet.annotation.*;
 @WebServlet(name = "CurrenciesServlet", value = "/currencies/*")
 public class CurrenciesServlet extends HttpServlet {
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response, request);
         CurrencyDTO currency = null;
+        CurrenciesDAO dao = null;
         try {
-            CurrenciesDAO dao = new CurrenciesDAO();
+            dao = new CurrenciesDAO();
 
             String name = request.getParameter("name");
             String code = request.getParameter("code");
             String sign = request.getParameter("sign");
-
 
             if (name == null || code == null || sign == null) { //проверка полей параметров
                 responseGenerator.misField();
@@ -44,12 +45,15 @@ public class CurrenciesServlet extends HttpServlet {
                 responseGenerator.DBisNotFound();
             }
         }
+        dao.closeConnection();
     }
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response, request);
+        CurrenciesDAO dao = null;
         try {
-            CurrenciesDAO dao = new CurrenciesDAO();
+            dao = new CurrenciesDAO();
 
             List<CurrencyDTO> currencies = dao.getCurrencies();
 
@@ -57,6 +61,7 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         }
+        dao.closeConnection();
     }
 
 }

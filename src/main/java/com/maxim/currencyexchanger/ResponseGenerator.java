@@ -1,7 +1,6 @@
 package com.maxim.currencyexchanger;
 
 import com.google.gson.Gson;
-import com.maxim.currencyexchanger.model.CurrencyDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.maxim.currencyexchanger.model.ErrorMessageDTO;
@@ -10,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class ResponseGenerator {
-    private HttpServletResponse resp;
+    private final HttpServletResponse resp;
     Gson gson;
 
     public ResponseGenerator(HttpServletResponse res, HttpServletRequest req) {
@@ -33,15 +32,6 @@ public class ResponseGenerator {
         String errJson = gson.toJson(err);
 
         resp.setStatus(500);
-        PrintWriter out = resp.getWriter();
-        out.print(errJson);
-        out.flush();
-    }
-
-    public void currencyExists() throws IOException {
-        ErrorMessageDTO err = new ErrorMessageDTO("Валюта с таким кодом уже уществует");
-        String errJson = gson.toJson(err);
-
         PrintWriter out = resp.getWriter();
         out.print(errJson);
         out.flush();
@@ -77,8 +67,18 @@ public class ResponseGenerator {
         out.flush();
     }
 
-    public void codeIsIncorrect() throws IOException {
-        ErrorMessageDTO err = new ErrorMessageDTO("Некорректно указан код валюты");
+    public void currencyNotFound() throws IOException {
+        ErrorMessageDTO err = new ErrorMessageDTO("Валюта не найдена");
+        String errJson = gson.toJson(err);
+
+        resp.setStatus(404);
+        PrintWriter out = resp.getWriter();
+        out.print(errJson);
+        out.flush();
+    }
+
+    public void exRatesNotFound() throws IOException {
+        ErrorMessageDTO err = new ErrorMessageDTO("Обменный курс для пары не найден");
         String errJson = gson.toJson(err);
 
         resp.setStatus(404);

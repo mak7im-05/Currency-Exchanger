@@ -1,14 +1,15 @@
 package com.maxim.currencyexchanger.model;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class ExchangeRatesDTO {
     private int id;
     private CurrencyDTO baseCurrency;
     private CurrencyDTO targetCurrency;
-    private BigInteger rate;
+    private BigDecimal rate;
 
-    public ExchangeRatesDTO(int id, CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigInteger rate) {
+    public ExchangeRatesDTO(int id, CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
@@ -39,11 +40,11 @@ public class ExchangeRatesDTO {
         this.targetCurrency = targetCurrency;
     }
 
-    public BigInteger getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(BigInteger rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 }
