@@ -1,17 +1,17 @@
 package com.maxim.currencyexchanger.model;
 
 public class ErrorMessageDTO {
-    private String error;
+    private String message;
 
     public ErrorMessageDTO(String error) {
-        this.error = error;
+        this.message = error;
     }
 
     public String getError() {
-        return error;
+        return message;
     }
 
     public void setError(String error) {
-        this.error = error;
+        this.message = error;
     }
 }

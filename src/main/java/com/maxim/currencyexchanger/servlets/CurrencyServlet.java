@@ -40,8 +40,12 @@ public class CurrencyServlet extends HttpServlet {
             responseGenerator.responseGenerator(currency);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
+        } finally {
+            if (dao != null) {
+                dao.closeConnection();
+            }
         }
-        dao.closeConnection();
+
     }
 
     private boolean isInvalid(String targetCurrencyCode) {

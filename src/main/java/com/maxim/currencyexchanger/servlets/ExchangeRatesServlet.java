@@ -28,12 +28,13 @@ public class ExchangeRatesServlet extends HttpServlet {
 
             String baseCurrencyCode = request.getParameter("baseCurrencyCode");
             String targetCurrencyCode = request.getParameter("targetCurrencyCode");
-            BigDecimal rate = new BigDecimal(request.getParameter("rate"));
+            String rateStr = request.getParameter("rate");
 
-            if (baseCurrencyCode == null || targetCurrencyCode == null || rate == null) {
+            if (baseCurrencyCode == null || targetCurrencyCode == null || rateStr == null) {
                 responseGenerator.misField();
                 return;
             }
+            BigDecimal rate = new BigDecimal(request.getParameter("rate"));
 
             CurrencyDTO baseCurrency = new CurrencyDTO();
             CurrencyDTO targetCurrency = new CurrencyDTO();
@@ -54,9 +55,10 @@ public class ExchangeRatesServlet extends HttpServlet {
             } else {
                 responseGenerator.DBisNotFound();
             }
-        }
-        if (dao != null) {
-            dao.closeConnection();
+        } finally {
+            if (dao != null) {
+                dao.closeConnection();
+            }
         }
     }
 

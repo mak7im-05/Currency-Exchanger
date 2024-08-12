@@ -1,11 +1,9 @@
 package com.maxim.currencyexchanger.servlets;
 
 import java.io.*;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.google.gson.Gson;
 import com.maxim.currencyexchanger.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 
@@ -45,7 +43,9 @@ public class CurrenciesServlet extends HttpServlet {
                 responseGenerator.DBisNotFound();
             }
         } finally {
-            dao.closeConnection();
+            if (dao != null) {
+                dao.closeConnection();
+            }
         }
     }
 
@@ -61,9 +61,13 @@ public class CurrenciesServlet extends HttpServlet {
             responseGenerator.responseGenerator(currencies);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
+        } finally {
+            if (dao != null) {
+                dao.closeConnection();
+            }
         }
-        dao.closeConnection();
     }
-
 }
+
+
 

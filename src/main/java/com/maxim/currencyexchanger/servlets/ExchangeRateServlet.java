@@ -2,6 +2,7 @@ package com.maxim.currencyexchanger.servlets;
 
 import com.maxim.currencyexchanger.DAO.ExchangeRatesDAO;
 import com.maxim.currencyexchanger.ResponseGenerator;
+import com.maxim.currencyexchanger.model.CurrencyDTO;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,10 +10,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 
 @WebServlet(name = "ExchangeRateServlet", value = "/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
+
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -44,7 +47,19 @@ public class ExchangeRateServlet extends HttpServlet {
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         } finally {
-            dao.closeConnection();
+            if (dao != null) {
+                dao.closeConnection();
+            }
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String method = request.getMethod();
+        if ("PATCH".equalsIgnoreCase(method)) {
+
+        } else {
+            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
     }
 }
