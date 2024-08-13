@@ -48,7 +48,7 @@ public class ResponseGenerator {
     }
 
     public void misField() throws IOException {
-        ErrorMessageDTO err = new ErrorMessageDTO("Отсутствует нужное поле формы");
+        ErrorMessageDTO err = new ErrorMessageDTO("Отсутствует нужное поле формы или содержит недопустимые значения");
         String errJson = gson.toJson(err);
 
         resp.setStatus(400);

@@ -62,8 +62,6 @@ public class CurrenciesDAO {
             }
         } catch (SQLException e) {
             throw new SQLException(e);
-        } finally {
-            connectDB.closeConnection();
         }
         return currency;
     }
@@ -99,13 +97,16 @@ public class CurrenciesDAO {
 }
 
 // настроить DTO DONE
+// Закончить все запросы
 
-//
+// Зарефакторить ExchangeDao спросить!
+// вынести код в функции
+// Разобраться с BigDecimal
 // Exeption написать все корректно
 // Задеплоить с визуалом
-// Закончить все запросы
 // проверить корректность mvc
 // Сделать разумный нейминг
 // создать постман коллекцию
 // сделать rate нормик
+
 
