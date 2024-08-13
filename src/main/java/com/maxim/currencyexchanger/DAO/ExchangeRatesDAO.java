@@ -4,6 +4,7 @@ import com.maxim.currencyexchanger.ConnectDB;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +135,18 @@ public class ExchangeRatesDAO {
                     rs.getString(4));
         }
         return currency;
+    }
+
+    public void updateRateFromExRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
+        String query = "UPDATE ExchangeRates " +
+                "SET rate = ? " +
+                "WHERE (SELECT id FROM currencies WHERE code=?)=BaseCurrencyID " +
+                "AND (SELECT id FROM currencies WHERE code=?)=TargetCurrencyID";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setBigDecimal(1, rate);
+        statement.setString(2, baseCurrencyCode);
+        statement.setString(3, targetCurrencyCode);
+        statement.executeUpdate();
     }
 }
 
