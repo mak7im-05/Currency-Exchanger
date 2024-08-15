@@ -1,7 +1,6 @@
-package com.maxim.currencyexchanger;
+package com.maxim.currencyexchanger.Utils;
 
 import com.google.gson.Gson;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.maxim.currencyexchanger.model.ErrorMessageDTO;
 
@@ -19,15 +18,15 @@ public class ResponseGenerator {
         gson = new Gson();
     }
 
-    public <T> void responseGenerator(T ans) throws IOException {
+    public <T> void successResponseGenerator(T ans, int statusCode) throws IOException {
         String ansJson = gson.toJson(ans);
-        resp.setStatus(200);
+        resp.setStatus(statusCode);
         PrintWriter out = resp.getWriter();
         out.print(ansJson);
         out.flush();
     }
 
-    public void DBisNotFound () throws IOException {
+    public void DBisNotFound() throws IOException {
         ErrorMessageDTO err = new ErrorMessageDTO("База данных недоступна.");
         String errJson = gson.toJson(err);
 

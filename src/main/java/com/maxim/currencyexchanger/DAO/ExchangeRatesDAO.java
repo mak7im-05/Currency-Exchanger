@@ -1,6 +1,6 @@
 package com.maxim.currencyexchanger.DAO;
 
-import com.maxim.currencyexchanger.ConnectDB;
+import com.maxim.currencyexchanger.Utils.ConnectDB;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 
@@ -87,9 +87,10 @@ public class ExchangeRatesDAO {
     }
 
     public ExchangeRatesDTO createExchangeRate(ExchangeRatesDTO exRate) throws SQLException {
+        CurrenciesDAO dao = new CurrenciesDAO();
 
-        CurrencyDTO baseCurrency = getCurrencyByCode(exRate.getBaseCurrency().getCode());
-        CurrencyDTO targetCurrency = getCurrencyByCode(exRate.getTargetCurrency().getCode());
+        CurrencyDTO baseCurrency = dao.getCurrencyByCode(exRate.getBaseCurrency().getCode());
+        CurrencyDTO targetCurrency = dao.getCurrencyByCode(exRate.getTargetCurrency().getCode());
 
         if (baseCurrency == null || targetCurrency == null) {
             throw new SQLException();
@@ -116,25 +117,11 @@ public class ExchangeRatesDAO {
             exRate.setTargetCurrency(targetCurrency);
         } catch (SQLException e) {
             throw new SQLException(e);
+        } finally {
+            dao.closeConnection();
         }
 
         return exRate;
-    }
-
-    public CurrencyDTO getCurrencyByCode(String code) throws SQLException {
-        CurrencyDTO currency = null;
-        String query = "SELECT * FROM Currencies WHERE Code = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setString(1, code);
-        ResultSet rs = statement.executeQuery();
-        if (rs.next()) {
-            currency = new CurrencyDTO(
-                    rs.getInt(1),
-                    rs.getString(2),
-                    rs.getString(3),
-                    rs.getString(4));
-        }
-        return currency;
     }
 
     public void updateRateFromExRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {

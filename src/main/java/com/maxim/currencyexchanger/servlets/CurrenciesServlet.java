@@ -4,7 +4,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.maxim.currencyexchanger.ResponseGenerator;
+import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 
 import com.maxim.currencyexchanger.DAO.CurrenciesDAO;
@@ -17,8 +17,8 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        CurrencyDTO currency = null;
         CurrenciesDAO dao = null;
+        CurrencyDTO currency = null;
         try {
             dao = new CurrenciesDAO();
 
@@ -26,7 +26,7 @@ public class CurrenciesServlet extends HttpServlet {
             String code = request.getParameter("code");
             String sign = request.getParameter("sign");
 
-            if (name == null || code == null || sign == null) { //проверка полей параметров
+            if (isInvalidParametrs(name, code, sign)) { //проверка полей параметров
                 responseGenerator.misField();
                 return;
             }
@@ -35,7 +35,7 @@ public class CurrenciesServlet extends HttpServlet {
 
             CurrencyDTO createdCurrency = dao.createCurrency(currency);
 
-            responseGenerator.responseGenerator(createdCurrency);
+            responseGenerator.successResponseGenerator(createdCurrency, 201);
         } catch (SQLException e) {
             if (currency.getId() == -1) {
                 responseGenerator.currencyIsAlreadyExists();
@@ -58,7 +58,7 @@ public class CurrenciesServlet extends HttpServlet {
 
             List<CurrencyDTO> currencies = dao.getCurrencies();
 
-            responseGenerator.responseGenerator(currencies);
+            responseGenerator.successResponseGenerator(currencies, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         } finally {
@@ -66,6 +66,10 @@ public class CurrenciesServlet extends HttpServlet {
                 dao.closeConnection();
             }
         }
+    }
+
+    private boolean isInvalidParametrs(String name, String code, String sign) {
+        return name == null || code == null || sign == null;
     }
 }
 

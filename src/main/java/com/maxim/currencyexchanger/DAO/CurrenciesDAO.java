@@ -1,6 +1,6 @@
 package com.maxim.currencyexchanger.DAO;
 
-import com.maxim.currencyexchanger.ConnectDB;
+import com.maxim.currencyexchanger.Utils.ConnectDB;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 
 import java.sql.*;
@@ -40,8 +40,6 @@ public class CurrenciesDAO {
             }
         } catch (SQLException e) {
             throw new SQLException(e);
-        } finally {
-            connectDB.closeConnection();
         }
         return currencies;
     }
@@ -82,31 +80,9 @@ public class CurrenciesDAO {
 
         return currency;
     }
-
-    public void deleteCurrency(int id) {
-        try {
-            String query = "DELETE FROM Currencies WHERE ID = ?";
-            PreparedStatement statement = null;
-            statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
 
-// настроить DTO DONE
-// Закончить все запросы
-
-// Зарефакторить ExchangeDao спросить!
-// вынести код в функции
-// Разобраться с BigDecimal
-// Exeption написать все корректно
 // Задеплоить с визуалом
-// проверить корректность mvc
-// Сделать разумный нейминг
-// создать постман коллекцию
-// сделать rate нормик
+//Readmefile
 
 

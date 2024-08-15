@@ -1,4 +1,4 @@
-package com.maxim.currencyexchanger;
+package com.maxim.currencyexchanger.Utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,9 +13,7 @@ public class ConnectDB {
         String url = "jdbc:sqlite:C:/D/study/CurrencyExchanger/src/main/resources/mydb.db";
         try {
             connection = DriverManager.getConnection(url);
-            System.out.println("Success");
         } catch (SQLException e) {
-            System.out.println("Error");
             e.printStackTrace();
         }
     }

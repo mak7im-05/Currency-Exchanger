@@ -1,7 +1,7 @@
 package com.maxim.currencyexchanger.servlets;
 
 import com.maxim.currencyexchanger.DAO.ExchangeRatesDAO;
-import com.maxim.currencyexchanger.ResponseGenerator;
+import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 
 import jakarta.servlet.ServletException;
@@ -47,12 +47,12 @@ public class ExchangeRateServlet extends HttpServlet {
 
             ExchangeRatesDTO exRate = dao.getExchangeRateByCodes(baseCurrencyCode, targetCurrencyCode);
 
-            if (exRate == null) {
+            if (exRate == null) { // не найдено
                 responseGenerator.exRatesNotFound();
                 return;
             }
 
-            responseGenerator.responseGenerator(exRate);
+            responseGenerator.successResponseGenerator(exRate, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         } finally {
@@ -96,7 +96,7 @@ public class ExchangeRateServlet extends HttpServlet {
                 return;
             }
 
-            responseGenerator.responseGenerator(updatedExRate);
+            responseGenerator.successResponseGenerator(updatedExRate, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         } finally {

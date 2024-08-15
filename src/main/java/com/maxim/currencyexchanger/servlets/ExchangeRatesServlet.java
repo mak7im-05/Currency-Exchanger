@@ -1,7 +1,7 @@
 package com.maxim.currencyexchanger.servlets;
 
 import com.maxim.currencyexchanger.DAO.ExchangeRatesDAO;
-import com.maxim.currencyexchanger.ResponseGenerator;
+import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,11 +30,11 @@ public class ExchangeRatesServlet extends HttpServlet {
             String targetCurrencyCode = request.getParameter("targetCurrencyCode");
             String rateStr = request.getParameter("rate");
 
-            if (baseCurrencyCode == null || targetCurrencyCode == null || rateStr == null) {
+            if (isInvalidParametrs(baseCurrencyCode, targetCurrencyCode, rateStr)) {
                 responseGenerator.misField();
                 return;
             }
-            BigDecimal rate = new BigDecimal(request.getParameter("rate"));
+            BigDecimal rate = new BigDecimal(rateStr);
 
             CurrencyDTO baseCurrency = new CurrencyDTO();
             CurrencyDTO targetCurrency = new CurrencyDTO();
@@ -46,11 +46,11 @@ public class ExchangeRatesServlet extends HttpServlet {
 
             ExchangeRatesDTO createdExRate = dao.createExchangeRate(exRate);
 
-            responseGenerator.responseGenerator(createdExRate);
+            responseGenerator.successResponseGenerator(createdExRate, 201);
         } catch (SQLException e) {
-            if (exRate.getId() == 0) {
+            if (exRate.getId() == 0) { // валютной пары не существуют
                 responseGenerator.currencyPairIsNotExist();
-            } else if (exRate.getId() == -2) {
+            } else if (exRate.getId() == -2) {// уже сузествуют
                 responseGenerator.currencyIsAlreadyExists();
             } else {
                 responseGenerator.DBisNotFound();
@@ -70,7 +70,7 @@ public class ExchangeRatesServlet extends HttpServlet {
             dao = new ExchangeRatesDAO();
             List<ExchangeRatesDTO> exchangeRates = dao.getExchangeRates();
 
-            responseGenerator.responseGenerator(exchangeRates);
+            responseGenerator.successResponseGenerator(exchangeRates, 200);
 
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
@@ -78,6 +78,10 @@ public class ExchangeRatesServlet extends HttpServlet {
         if (dao != null) {
             dao.closeConnection();
         }
+    }
+
+    private boolean isInvalidParametrs(String baseCurrencyCode, String targetCurrencyCode, String rateStr) {
+        return baseCurrencyCode == null || targetCurrencyCode == null || rateStr == null;
     }
 
 }

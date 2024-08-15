@@ -4,7 +4,7 @@ import java.io.*;
 import java.sql.SQLException;
 
 import com.maxim.currencyexchanger.DAO.CurrenciesDAO;
-import com.maxim.currencyexchanger.ResponseGenerator;
+import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -32,12 +32,12 @@ public class CurrencyServlet extends HttpServlet {
 
             CurrencyDTO currency = dao.getCurrencyByCode(targetCurrencyCode);
 
-            if (currency == null) {
+            if (currency == null) { // если не нашлась валюта
                 responseGenerator.currencyNotFound();
                 return;
             }
 
-            responseGenerator.responseGenerator(currency);
+            responseGenerator.successResponseGenerator(currency, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         } finally {
