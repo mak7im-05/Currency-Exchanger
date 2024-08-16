@@ -13,8 +13,8 @@ public class ResponseGenerator {
 
     public ResponseGenerator(HttpServletResponse res) {
         this.resp = res;
-        this.resp.setContentType("application/json");
-        this.resp.setCharacterEncoding("UTF-8");
+//        this.resp.setContentType("application/json");
+//        this.resp.setCharacterEncoding("UTF-8");
         gson = new Gson();
     }
 
