@@ -82,7 +82,6 @@ public class ExchangeRatesDAO {
                             rs.getString(9)),
                     rs.getBigDecimal(10));
         }
-
         return exRate;
     }
 
@@ -117,10 +116,7 @@ public class ExchangeRatesDAO {
             exRate.setTargetCurrency(targetCurrency);
         } catch (SQLException e) {
             throw new SQLException(e);
-        } finally {
-            dao.closeConnection();
         }
-
         return exRate;
     }
 

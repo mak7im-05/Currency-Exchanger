@@ -1,9 +1,12 @@
 package com.maxim.currencyexchanger.Utils;
 
+import lombok.Getter;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Getter
 public class ConnectDB {
 
     private Connection connection;
@@ -16,10 +19,6 @@ public class ConnectDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
     public void closeConnection() {

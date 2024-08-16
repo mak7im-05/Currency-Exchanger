@@ -8,15 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CurrenciesDAO {
-    private Connection connection;
-    private ConnectDB connectDB;
+    private final Connection connection;
+    private final ConnectDB connectDB;
 
-    public CurrenciesDAO() {
+    public CurrenciesDAO() throws SQLException {
         try {
             connectDB = new ConnectDB();
             connection = connectDB.getConnection();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new SQLException(e);
         }
     }
 
@@ -82,15 +82,14 @@ public class CurrenciesDAO {
     }
 }
 
-// Задеплоить с визуалом
-//Readmefile
 
+//Readmefile
 //Дублирование кода вместо использования filter для установки заголовков ответов во всех сервлетах - content-type и character encoding
-//Не обязательно, но полезно:
-//
+//LomBOk DONE
+
 //Реализовать connection pool вместо того чтобы открывать по новому соединению на каждую SQL операцию
 //Использовать MapStruct или ModelMapper чтобы совершать преобразования между классами-моделями и DTO
+// Задеплоить с визуалом
 
-//LomBOk
-
+//бизнесс логика в DAO
 
