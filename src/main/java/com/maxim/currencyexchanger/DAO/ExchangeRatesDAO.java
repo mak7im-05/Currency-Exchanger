@@ -35,21 +35,25 @@ public class ExchangeRatesDAO {
                 "FROM ExchangeRates\n" +
                 "JOIN Currencies C on C.id = ExchangeRates.basecurrencyid\n" +
                 "JOIN Currencies C2 on C2.id = ExchangeRates.targetcurrencyid";
-        PreparedStatement statement = connection.prepareStatement(query);
-        ResultSet rs = statement.executeQuery();
-        while (rs.next()) {
-            ExchangeRatesDTO exRate = new ExchangeRatesDTO(
-                    rs.getInt(1),
-                    new CurrencyDTO(rs.getInt(2),
-                            rs.getString(3),
-                            rs.getString(4),
-                            rs.getString(5)),
-                    new CurrencyDTO(rs.getInt(6),
-                            rs.getString(7),
-                            rs.getString(8),
-                            rs.getString(9)),
-                    rs.getBigDecimal(10));
-            exRates.add(exRate);
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                ExchangeRatesDTO exRate = new ExchangeRatesDTO(
+                        rs.getInt(1),
+                        new CurrencyDTO(rs.getInt(2),
+                                rs.getString(3),
+                                rs.getString(4),
+                                rs.getString(5)),
+                        new CurrencyDTO(rs.getInt(6),
+                                rs.getString(7),
+                                rs.getString(8),
+                                rs.getString(9)),
+                        rs.getBigDecimal(10));
+                exRates.add(exRate);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
         }
 
         return exRates;
@@ -65,58 +69,52 @@ public class ExchangeRatesDAO {
                 "JOIN Currencies C on C.id = ExchangeRates.basecurrencyid\n" +
                 "JOIN Currencies C2 on C2.id = ExchangeRates.targetcurrencyid\n" +
                 "WHERE C.Code = ? AND C2.Code = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setString(1, baseCurrencyCode);
-        statement.setString(2, targetCurrencyCode);
-        ResultSet rs = statement.executeQuery();
-        while (rs.next()) {
-            exRate = new ExchangeRatesDTO(
-                    rs.getInt(1),
-                    new CurrencyDTO(rs.getInt(2),
-                            rs.getString(3),
-                            rs.getString(4),
-                            rs.getString(5)),
-                    new CurrencyDTO(rs.getInt(6),
-                            rs.getString(7),
-                            rs.getString(8),
-                            rs.getString(9)),
-                    rs.getBigDecimal(10));
-        }
-        return exRate;
-    }
-
-    public ExchangeRatesDTO createExchangeRate(ExchangeRatesDTO exRate) throws SQLException {
-        CurrenciesDAO dao = new CurrenciesDAO();
-
-        CurrencyDTO baseCurrency = dao.getCurrencyByCode(exRate.getBaseCurrency().getCode());
-        CurrencyDTO targetCurrency = dao.getCurrencyByCode(exRate.getTargetCurrency().getCode());
-
-        if (baseCurrency == null || targetCurrency == null) {
-            throw new SQLException();
-        }
-
-        exRate.setId(-1); // Одна (или обе) валюта из валютной пары не существует в БД - 404
-
-        String queryCreate = "INSERT INTO ExchangeRates (BaseCurrencyID, TargetCurrencyID, Rate) VALUES (?, ?, ?)";
         try {
-            PreparedStatement statement = connection.prepareStatement(queryCreate);
-
-            exRate.setId(-2); // Ошибка (например, база данных недоступна) - 500
-
-
-            statement.setInt(1, baseCurrency.getId());
-            statement.setInt(2, targetCurrency.getId());
-            statement.setBigDecimal(3, exRate.getRate());
-            statement.executeUpdate();
-
-            ResultSet generateId = statement.getGeneratedKeys();
-
-            exRate.setId(generateId.getInt(1));
-            exRate.setBaseCurrency(baseCurrency);
-            exRate.setTargetCurrency(targetCurrency);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, baseCurrencyCode);
+            statement.setString(2, targetCurrencyCode);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                exRate = new ExchangeRatesDTO(
+                        rs.getInt(1),
+                        new CurrencyDTO(rs.getInt(2),
+                                rs.getString(3),
+                                rs.getString(4),
+                                rs.getString(5)),
+                        new CurrencyDTO(rs.getInt(6),
+                                rs.getString(7),
+                                rs.getString(8),
+                                rs.getString(9)),
+                        rs.getBigDecimal(10));
+            }
         } catch (SQLException e) {
             throw new SQLException(e);
         }
+
+        return exRate;
+    }
+
+    public ExchangeRatesDTO createExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) throws SQLException {
+        String queryCreate = "INSERT INTO ExchangeRates (BaseCurrencyID, TargetCurrencyID, Rate) VALUES (?, ?, ?)";
+        ExchangeRatesDTO exRate = new ExchangeRatesDTO();
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(queryCreate);
+        } catch (SQLException e) {
+            throw new SQLException("DB failed");
+        }
+
+        statement.setInt(1, baseCurrencyId);
+        statement.setInt(2, targetCurrencyId);
+        statement.setBigDecimal(3, rate);
+        try {
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Currency is exists");
+        }
+        ResultSet generateId = statement.getGeneratedKeys();
+
+        exRate.setId(generateId.getInt(1));
         return exRate;
     }
 

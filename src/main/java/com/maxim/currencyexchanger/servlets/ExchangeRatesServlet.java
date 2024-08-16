@@ -1,5 +1,6 @@
 package com.maxim.currencyexchanger.servlets;
 
+import com.maxim.currencyexchanger.DAO.CurrenciesDAO;
 import com.maxim.currencyexchanger.DAO.ExchangeRatesDAO;
 import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
@@ -21,10 +22,12 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        ExchangeRatesDAO dao = null;
+        ExchangeRatesDAO exchangeDao = null;
+        CurrenciesDAO currenciesDAO = null;
         ExchangeRatesDTO exRate = null;
         try {
-            dao = new ExchangeRatesDAO();
+            exchangeDao = new ExchangeRatesDAO();
+            currenciesDAO = new CurrenciesDAO();
 
             String baseCurrencyCode = request.getParameter("baseCurrencyCode");
             String targetCurrencyCode = request.getParameter("targetCurrencyCode");
@@ -36,28 +39,32 @@ public class ExchangeRatesServlet extends HttpServlet {
             }
             BigDecimal rate = new BigDecimal(rateStr);
 
-            CurrencyDTO baseCurrency = new CurrencyDTO();
-            CurrencyDTO targetCurrency = new CurrencyDTO();
+            CurrencyDTO baseCurrency = currenciesDAO.getCurrencyByCode(baseCurrencyCode);
+            CurrencyDTO targetCurrency = currenciesDAO.getCurrencyByCode(targetCurrencyCode);
 
-            baseCurrency.setCode(baseCurrencyCode.toUpperCase());
-            targetCurrency.setCode(targetCurrencyCode.toUpperCase());
+            if (baseCurrency == null || targetCurrency == null) {
+                responseGenerator.currencyPairIsNotExist();
+                return;
+            }
 
-            exRate = new ExchangeRatesDTO(0, baseCurrency, targetCurrency, rate);
+            ExchangeRatesDTO createdExRate = exchangeDao.createExchangeRate(baseCurrency.getId(), targetCurrency.getId(), rate);
 
-            ExchangeRatesDTO createdExRate = dao.createExchangeRate(exRate);
+            createdExRate.setBaseCurrency(baseCurrency);
+            createdExRate.setTargetCurrency(targetCurrency);
 
             responseGenerator.successResponseGenerator(createdExRate, 201);
         } catch (SQLException e) {
-            if (exRate.getId() == 0) { // валютной пары не существуют
-                responseGenerator.currencyPairIsNotExist();
-            } else if (exRate.getId() == -2) {// уже сузествуют
+            if (e.getMessage().equals("Currency is exists")) {// уже существуют
                 responseGenerator.currencyIsAlreadyExists();
-            } else {
+            } else if (e.getMessage().equals("DB failed")) {
                 responseGenerator.DBisNotFound();
             }
         } finally {
-            if (dao != null) {
-                dao.closeConnection();
+            if (exchangeDao != null) {
+                exchangeDao.closeConnection();
+            }
+            if (currenciesDAO != null) {
+                currenciesDAO.closeConnection();
             }
         }
     }

@@ -65,15 +65,22 @@ public class CurrenciesDAO {
     }
 
     public CurrencyDTO createCurrency(CurrencyDTO currency) throws SQLException {
-        String CREATE = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(CREATE);
-
-        currency.setId(-1); // для отслеживания exceptions (если -1 -> тогда валюта уже существует, иначе база данных сломалась)
+        String query = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+        } catch (SQLException e) {
+            throw new SQLException("DB failed");
+        }
 
         statement.setString(1, currency.getCode());
         statement.setString(2, currency.getName());
         statement.setString(3, currency.getSign());
-        statement.executeUpdate();
+        try {
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Currency is exists");
+        }
 
         ResultSet generateId = statement.getGeneratedKeys();
         currency.setId(generateId.getInt(1));
@@ -86,10 +93,12 @@ public class CurrenciesDAO {
 //Readmefile
 //Дублирование кода вместо использования filter для установки заголовков ответов во всех сервлетах - content-type и character encoding
 //LomBOk DONE
+// тесты для postExRates
+//проблема с exceptions
+//бизнесс логика в DAO
+
 
 //Реализовать connection pool вместо того чтобы открывать по новому соединению на каждую SQL операцию
 //Использовать MapStruct или ModelMapper чтобы совершать преобразования между классами-моделями и DTO
 // Задеплоить с визуалом
-
-//бизнесс логика в DAO
 

@@ -37,10 +37,10 @@ public class CurrenciesServlet extends HttpServlet {
 
             responseGenerator.successResponseGenerator(createdCurrency, 201);
         } catch (SQLException e) {
-            if (currency.getId() == -1) {
-                responseGenerator.currencyIsAlreadyExists();
-            } else {
+            if (e.getMessage().equals("DB failed")) {
                 responseGenerator.DBisNotFound();
+            } else if (e.getMessage().equals("Currency is exists")) {
+                responseGenerator.currencyIsAlreadyExists();
             }
         } finally {
             if (dao != null) {
