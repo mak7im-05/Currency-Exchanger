@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExchangeRatesDAO {
+public class ExchangeRatesDAO implements IExchangeRatesDao {
 
     public List<ExchangeRatesDTO> getExchangeRates() throws SQLException {
         List<ExchangeRatesDTO> exRates = new ArrayList<>();

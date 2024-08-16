@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CurrenciesDAO {
+public class CurrenciesDAO implements ICurrenciesDAO {
 
     public List<CurrencyDTO> getCurrencies() throws SQLException {
         List<CurrencyDTO> currencies = new ArrayList<>();
