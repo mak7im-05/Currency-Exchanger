@@ -21,11 +21,9 @@ public class ExchangeServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        CurrenciesDAO currenciesDAO = null;
-        ExchangeRatesDAO exRatesDAO = null;
         try {
-            currenciesDAO = new CurrenciesDAO();
-            exRatesDAO = new ExchangeRatesDAO();
+            CurrenciesDAO currenciesDAO = new CurrenciesDAO();
+            ExchangeRatesDAO exRatesDAO = new ExchangeRatesDAO();
 
             String baseCurrencyCode = request.getParameter("from"); // принимаем параметры
             String targetCurrencyCode = request.getParameter("to");
@@ -88,13 +86,6 @@ public class ExchangeServlet extends HttpServlet {
             responseGenerator.successResponseGenerator(respEx, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
-        } finally {
-            if (currenciesDAO != null) {
-                currenciesDAO.closeConnection();
-            }
-            if (exRatesDAO != null) {
-                exRatesDAO.closeConnection();
-            }
         }
     }
 

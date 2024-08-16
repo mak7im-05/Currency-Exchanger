@@ -1,6 +1,6 @@
 package com.maxim.currencyexchanger.DAO;
 
-import com.maxim.currencyexchanger.Utils.ConnectDB;
+import com.maxim.currencyexchanger.Utils.DatabaseConnectionPool;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 
@@ -10,21 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExchangeRatesDAO {
-    private final Connection connection;
-    private final ConnectDB connectDB;
-
-    public ExchangeRatesDAO() throws SQLException {
-        try {
-            connectDB = new ConnectDB();
-            connection = connectDB.getConnection();
-        } catch (ClassNotFoundException e) {
-            throw new SQLException(e);
-        }
-    }
-
-    public void closeConnection() {
-        connectDB.closeConnection();
-    }
 
     public List<ExchangeRatesDTO> getExchangeRates() throws SQLException {
         List<ExchangeRatesDTO> exRates = new ArrayList<>();
@@ -36,7 +21,9 @@ public class ExchangeRatesDAO {
                 "JOIN Currencies C on C.id = ExchangeRates.basecurrencyid\n" +
                 "JOIN Currencies C2 on C2.id = ExchangeRates.targetcurrencyid";
         try {
+            Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
+
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 ExchangeRatesDTO exRate = new ExchangeRatesDTO(
@@ -70,7 +57,9 @@ public class ExchangeRatesDAO {
                 "JOIN Currencies C2 on C2.id = ExchangeRates.targetcurrencyid\n" +
                 "WHERE C.Code = ? AND C2.Code = ?";
         try {
+            Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
+
             statement.setString(1, baseCurrencyCode);
             statement.setString(2, targetCurrencyCode);
             ResultSet rs = statement.executeQuery();
@@ -95,11 +84,13 @@ public class ExchangeRatesDAO {
     }
 
     public ExchangeRatesDTO createExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) throws SQLException {
-        String queryCreate = "INSERT INTO ExchangeRates (BaseCurrencyID, TargetCurrencyID, Rate) VALUES (?, ?, ?)";
+        String query = "INSERT INTO ExchangeRates (BaseCurrencyID, TargetCurrencyID, Rate) VALUES (?, ?, ?)";
         ExchangeRatesDTO exRate = new ExchangeRatesDTO();
         PreparedStatement statement;
         try {
-            statement = connection.prepareStatement(queryCreate);
+            Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
+            statement = connection.prepareStatement(query);
+
         } catch (SQLException e) {
             throw new SQLException("DB failed");
         }
@@ -123,6 +114,7 @@ public class ExchangeRatesDAO {
                 "SET rate = ? " +
                 "WHERE (SELECT id FROM currencies WHERE code=?)=BaseCurrencyID " +
                 "AND (SELECT id FROM currencies WHERE code=?)=TargetCurrencyID";
+        Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setBigDecimal(1, rate);
         statement.setString(2, baseCurrencyCode);

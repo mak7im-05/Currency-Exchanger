@@ -29,9 +29,8 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        ExchangeRatesDAO dao = null;
         try {
-            dao = new ExchangeRatesDAO();
+            ExchangeRatesDAO dao = new ExchangeRatesDAO();
 
             String reqURI = request.getRequestURI(); // принимаем параметры в реквесте
             String[] urlParts = reqURI.split("/");
@@ -55,18 +54,13 @@ public class ExchangeRateServlet extends HttpServlet {
             responseGenerator.successResponseGenerator(exRate, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
-        } finally {
-            if (dao != null) {
-                dao.closeConnection();
-            }
         }
     }
 
     public void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        ExchangeRatesDAO dao = null;
         try {
-            dao = new ExchangeRatesDAO();
+            ExchangeRatesDAO dao = new ExchangeRatesDAO();
 
             String reqURI = request.getRequestURI(); // принимаем параметры в реквесте
             String[] urlParts = reqURI.split("/");
@@ -99,10 +93,6 @@ public class ExchangeRateServlet extends HttpServlet {
             responseGenerator.successResponseGenerator(updatedExRate, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
-        } finally {
-            if (dao != null) {
-                dao.closeConnection();
-            }
         }
     }
 }

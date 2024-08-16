@@ -17,10 +17,8 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        CurrenciesDAO dao = null;
-        CurrencyDTO currency = null;
         try {
-            dao = new CurrenciesDAO();
+            CurrenciesDAO dao = new CurrenciesDAO();
 
             String name = request.getParameter("name");
             String code = request.getParameter("code");
@@ -31,7 +29,7 @@ public class CurrenciesServlet extends HttpServlet {
                 return;
             }
 
-            currency = new CurrencyDTO(0, name, code, sign);
+            CurrencyDTO currency = new CurrencyDTO(0, name, code, sign);
 
             CurrencyDTO createdCurrency = dao.createCurrency(currency);
 
@@ -42,29 +40,20 @@ public class CurrenciesServlet extends HttpServlet {
             } else if (e.getMessage().equals("Currency is exists")) {
                 responseGenerator.currencyIsAlreadyExists();
             }
-        } finally {
-            if (dao != null) {
-                dao.closeConnection();
-            }
         }
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        CurrenciesDAO dao = null;
         try {
-            dao = new CurrenciesDAO();
+            CurrenciesDAO dao = new CurrenciesDAO();
 
             List<CurrencyDTO> currencies = dao.getCurrencies();
 
             responseGenerator.successResponseGenerator(currencies, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
-        } finally {
-            if (dao != null) {
-                dao.closeConnection();
-            }
         }
     }
 

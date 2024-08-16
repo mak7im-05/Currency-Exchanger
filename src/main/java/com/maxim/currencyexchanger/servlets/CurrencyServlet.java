@@ -17,9 +17,8 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         responseGenerator = new ResponseGenerator(response);
-        CurrenciesDAO dao = null;
         try {
-            dao = new CurrenciesDAO();
+            CurrenciesDAO dao = new CurrenciesDAO();
 
             String reqURI = request.getRequestURI(); // принимаем параметры в реквесте
             String[] urlParts = reqURI.split("/");
@@ -40,10 +39,6 @@ public class CurrencyServlet extends HttpServlet {
             responseGenerator.successResponseGenerator(currency, 200);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
-        } finally {
-            if (dao != null) {
-                dao.closeConnection();
-            }
         }
 
     }

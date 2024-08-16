@@ -22,12 +22,10 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        ExchangeRatesDAO exchangeDao = null;
-        CurrenciesDAO currenciesDAO = null;
         ExchangeRatesDTO exRate = null;
         try {
-            exchangeDao = new ExchangeRatesDAO();
-            currenciesDAO = new CurrenciesDAO();
+            ExchangeRatesDAO exchangeDao = new ExchangeRatesDAO();
+            CurrenciesDAO currenciesDAO = new CurrenciesDAO();
 
             String baseCurrencyCode = request.getParameter("baseCurrencyCode");
             String targetCurrencyCode = request.getParameter("targetCurrencyCode");
@@ -59,31 +57,20 @@ public class ExchangeRatesServlet extends HttpServlet {
             } else if (e.getMessage().equals("DB failed")) {
                 responseGenerator.DBisNotFound();
             }
-        } finally {
-            if (exchangeDao != null) {
-                exchangeDao.closeConnection();
-            }
-            if (currenciesDAO != null) {
-                currenciesDAO.closeConnection();
-            }
         }
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ResponseGenerator responseGenerator = new ResponseGenerator(response);
-        ExchangeRatesDAO dao = null;
         try {
-            dao = new ExchangeRatesDAO();
+            ExchangeRatesDAO dao = new ExchangeRatesDAO();
             List<ExchangeRatesDTO> exchangeRates = dao.getExchangeRates();
 
             responseGenerator.successResponseGenerator(exchangeRates, 200);
 
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
-        }
-        if (dao != null) {
-            dao.closeConnection();
         }
     }
 

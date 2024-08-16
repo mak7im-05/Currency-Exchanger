@@ -1,6 +1,6 @@
 package com.maxim.currencyexchanger.DAO;
 
-import com.maxim.currencyexchanger.Utils.ConnectDB;
+import com.maxim.currencyexchanger.Utils.DatabaseConnectionPool;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 
 import java.sql.*;
@@ -8,28 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CurrenciesDAO {
-    private final Connection connection;
-    private final ConnectDB connectDB;
-
-    public CurrenciesDAO() throws SQLException {
-        try {
-            connectDB = new ConnectDB();
-            connection = connectDB.getConnection();
-        } catch (ClassNotFoundException e) {
-            throw new SQLException(e);
-        }
-    }
-
-    public void closeConnection() {
-        connectDB.closeConnection();
-    }
 
     public List<CurrencyDTO> getCurrencies() throws SQLException {
         List<CurrencyDTO> currencies = new ArrayList<>();
         String query = "SELECT * FROM Currencies";
-        try {
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet rs = statement.executeQuery();
+        try (Connection connection1 = DatabaseConnectionPool.getDataSource().getConnection();
+             PreparedStatement statement = connection1.prepareStatement(query);
+             ResultSet rs = statement.executeQuery()) {
+
             while (rs.next()) {
                 CurrencyDTO currency = new CurrencyDTO(
                         rs.getInt("id"),
@@ -48,7 +34,8 @@ public class CurrenciesDAO {
         CurrencyDTO currency = null;
         String query = "SELECT * FROM Currencies WHERE Code = ?";
         try {
-            PreparedStatement statement = connection.prepareStatement(query);
+            Connection connection1 = DatabaseConnectionPool.getDataSource().getConnection();
+            PreparedStatement statement = connection1.prepareStatement(query);
             statement.setString(1, code);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
@@ -68,7 +55,8 @@ public class CurrenciesDAO {
         String query = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement(query);
+            Connection connection1 = DatabaseConnectionPool.getDataSource().getConnection();
+            statement = connection1.prepareStatement(query);
         } catch (SQLException e) {
             throw new SQLException("DB failed");
         }
@@ -97,8 +85,7 @@ public class CurrenciesDAO {
 //проблема с exceptions
 //бизнесс логика в DAO
 
-
 //Реализовать connection pool вместо того чтобы открывать по новому соединению на каждую SQL операцию
 //Использовать MapStruct или ModelMapper чтобы совершать преобразования между классами-моделями и DTO
 // Задеплоить с визуалом
-
+// интерфейсы
