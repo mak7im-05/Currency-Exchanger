@@ -8,23 +8,30 @@ import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 
 import com.maxim.currencyexchanger.DAO.CurrenciesDAO;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 @WebServlet(name = "CurrenciesServlet", value = "/currencies/*")
 public class CurrenciesServlet extends HttpServlet {
+    private CurrenciesDAO dao;
+    private ResponseGenerator responseGenerator;
+
+    @Override
+    public void init(ServletConfig config) {
+        dao = new CurrenciesDAO();
+    }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         try {
-            CurrenciesDAO dao = new CurrenciesDAO();
+            responseGenerator = new ResponseGenerator(response);
 
             String name = request.getParameter("name");
             String code = request.getParameter("code");
             String sign = request.getParameter("sign");
 
-            if (isInvalidParametrs(name, code, sign)) { //проверка полей параметров
+            if (isInvalidParameters(name, code, sign)) { //проверка полей параметров
                 responseGenerator.misField();
                 return;
             }
@@ -45,9 +52,8 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         try {
-            CurrenciesDAO dao = new CurrenciesDAO();
+            responseGenerator = new ResponseGenerator(response);
 
             List<CurrencyDTO> currencies = dao.getCurrencies();
 
@@ -57,7 +63,7 @@ public class CurrenciesServlet extends HttpServlet {
         }
     }
 
-    private boolean isInvalidParametrs(String name, String code, String sign) {
+    private boolean isInvalidParameters(String name, String code, String sign) {
         return name == null || code == null || sign == null;
     }
 }

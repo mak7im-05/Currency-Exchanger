@@ -6,6 +6,7 @@ import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
 import com.maxim.currencyexchanger.model.ExchangeDTO;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,44 +19,54 @@ import java.sql.SQLException;
 
 @WebServlet(name = "ExchangeServlet", urlPatterns = "/exchange/*")
 public class ExchangeServlet extends HttpServlet {
+    private ExchangeRatesDAO exchangeRatesDAO;
+    private CurrenciesDAO currenciesDAO;
+    private ResponseGenerator responseGenerator;
+
+    private final int TRUE = 1;
+
+    @Override
+    public void init(ServletConfig config) {
+        exchangeRatesDAO = new ExchangeRatesDAO();
+        currenciesDAO = new CurrenciesDAO();
+    }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         try {
-            CurrenciesDAO currenciesDAO = new CurrenciesDAO();
-            ExchangeRatesDAO exRatesDAO = new ExchangeRatesDAO();
+            responseGenerator = new ResponseGenerator(response);
 
             String baseCurrencyCode = request.getParameter("from"); // принимаем параметры
             String targetCurrencyCode = request.getParameter("to");
             String amountStr = request.getParameter("amount");
 
-            if (invalidParametrs(baseCurrencyCode, targetCurrencyCode, amountStr)) { //проверка параметров
+            if (invalidParameters(baseCurrencyCode, targetCurrencyCode, amountStr)) { //проверка параметров
                 responseGenerator.misField();
                 return;
             }
 
             BigDecimal amount = new BigDecimal(amountStr);
 
-            if (amount.compareTo(new BigDecimal("0")) != 1) {
+            if (amount.compareTo(new BigDecimal("0")) != TRUE) {
                 responseGenerator.misField();
                 return;
             }
 
-            CurrencyDTO baseCurrency = currenciesDAO.getCurrencyByCode(baseCurrencyCode); // достаем объекты валют , для респонса
+            CurrencyDTO baseCurrency = currenciesDAO.getCurrencyByCode(baseCurrencyCode); // достаем объекты валют для response
             CurrencyDTO targetCurrency = currenciesDAO.getCurrencyByCode(targetCurrencyCode);
 
             if (baseCurrency == null || targetCurrency == null) { // одна из валют не существует в бд
                 responseGenerator.currencyPairIsNotExist();
                 return;
             }
-            // дальше идет вроде бизнесс-логика и должно находиться в service class, но из-за не большого кол-во строчек кода решил оставить здесь
-            ExchangeRatesDTO exRateForward = exRatesDAO.getExchangeRateByCodes(baseCurrencyCode, targetCurrencyCode); // первый случай АB
-            ExchangeRatesDTO exRateReverse = exRatesDAO.getExchangeRateByCodes(targetCurrencyCode, baseCurrencyCode); //второй случай BA
-            ExchangeRatesDTO usd_A = exRatesDAO.getExchangeRateByCodes("USD", baseCurrencyCode); // 3 случай USD - A & USD - B
-            ExchangeRatesDTO usd_B = exRatesDAO.getExchangeRateByCodes("USD", targetCurrencyCode); //все остальные случаи отпускаютсю
+            // дальше идет вроде бизнес-логика и должно находиться в service class, но из-за не большого кол-во строчек кода решил оставить здесь
+            ExchangeRatesDTO exRateForward = exchangeRatesDAO.getExchangeRateByCodes(baseCurrencyCode, targetCurrencyCode); // первый случай AB
+            ExchangeRatesDTO exRateReverse = exchangeRatesDAO.getExchangeRateByCodes(targetCurrencyCode, baseCurrencyCode); //второй случай BA
+            ExchangeRatesDTO usd_A = exchangeRatesDAO.getExchangeRateByCodes("USD", baseCurrencyCode); // 3 случай USD - A & USD - B
+            ExchangeRatesDTO usd_B = exchangeRatesDAO.getExchangeRateByCodes("USD", targetCurrencyCode); //все остальные случаи опускаются
 
-            BigDecimal convertedAmount = null;
-            BigDecimal rate = null;
+            BigDecimal convertedAmount;
+            BigDecimal rate;
             if (exRateForward != null) {
                 rate = exRateForward.getRate();
                 convertedAmount = rate.multiply(amount).setScale(2, RoundingMode.HALF_UP);
@@ -89,7 +100,7 @@ public class ExchangeServlet extends HttpServlet {
         }
     }
 
-    private boolean invalidParametrs(String baseCurrencyCode, String targetCurrencyCode, String amountStr) {
+    private boolean invalidParameters(String baseCurrencyCode, String targetCurrencyCode, String amountStr) {
         return baseCurrencyCode == null || targetCurrencyCode == null || amountStr == null || baseCurrencyCode.length() != 3 || targetCurrencyCode.length() != 3;
     }
 }

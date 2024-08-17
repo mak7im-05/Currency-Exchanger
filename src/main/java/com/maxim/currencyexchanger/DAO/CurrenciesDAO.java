@@ -53,7 +53,7 @@ public class CurrenciesDAO implements ICurrenciesDAO {
 
     public CurrencyDTO createCurrency(CurrencyDTO currency) throws SQLException {
         String query = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
-        PreparedStatement statement = null;
+        PreparedStatement statement;
         try {
             Connection connection1 = DatabaseConnectionPool.getDataSource().getConnection();
             statement = connection1.prepareStatement(query);
@@ -78,14 +78,15 @@ public class CurrenciesDAO implements ICurrenciesDAO {
 }
 
 
-//Readmefile
-//Дублирование кода вместо использования filter для установки заголовков ответов во всех сервлетах - content-type и character encoding
+//README.md
+//Дублирование кода вместо использования filter для установки заголовков ответов во всех servlets - content-type и character encoding
 //LomBOk DONE
 // тесты для postExRates
 //проблема с exceptions
-//бизнесс логика в DAO
-
-//Реализовать connection pool вместо того чтобы открывать по новому соединению на каждую SQL операцию
-//Использовать MapStruct или ModelMapper чтобы совершать преобразования между классами-моделями и DTO
-// Задеплоить с визуалом
+//бизнес логика в DAO
 // интерфейсы
+//Реализовать connection pool вместо того чтобы открывать по новому соединению на каждую SQL операцию
+
+//Использовать MapStruct или ModelMapper, чтобы совершать преобразования между классами-моделями и DTO
+// deploy
+//вынести в private поля DAO и RespGen

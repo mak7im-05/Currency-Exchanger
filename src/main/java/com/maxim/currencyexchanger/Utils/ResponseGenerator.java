@@ -37,7 +37,7 @@ public class ResponseGenerator {
     }
 
     public void currencyIsAlreadyExists() throws IOException {
-        ErrorMessageDTO err = new ErrorMessageDTO("Валюта/Валютная пара с таким кодом уже уществует");
+        ErrorMessageDTO err = new ErrorMessageDTO("Валюта/Валютная пара с таким кодом уже существует");
         String errJson = gson.toJson(err);
 
         resp.setStatus(409);

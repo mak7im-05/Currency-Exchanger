@@ -6,19 +6,25 @@ import java.sql.SQLException;
 import com.maxim.currencyexchanger.DAO.CurrenciesDAO;
 import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.CurrencyDTO;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 @WebServlet(name = "CurrencyServlet", value = "/currency/*")
 public class CurrencyServlet extends HttpServlet {
+    private CurrenciesDAO dao;
+    private ResponseGenerator responseGenerator;
 
-    ResponseGenerator responseGenerator;
+    @Override
+    public void init(ServletConfig config) {
+        dao = new CurrenciesDAO();
+    }
+
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        responseGenerator = new ResponseGenerator(response);
         try {
-            CurrenciesDAO dao = new CurrenciesDAO();
+            responseGenerator = new ResponseGenerator(response);
 
             String reqURI = request.getRequestURI(); // принимаем параметры в реквесте
             String[] urlParts = reqURI.split("/");

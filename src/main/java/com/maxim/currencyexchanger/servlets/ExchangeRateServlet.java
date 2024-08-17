@@ -4,6 +4,7 @@ import com.maxim.currencyexchanger.DAO.ExchangeRatesDAO;
 import com.maxim.currencyexchanger.Utils.ResponseGenerator;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +17,13 @@ import java.sql.SQLException;
 
 @WebServlet(name = "ExchangeRateServlet", value = "/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
+    private ExchangeRatesDAO dao;
+    private ResponseGenerator responseGenerator;
+
+    @Override
+    public void init(ServletConfig config) {
+        dao = new ExchangeRatesDAO();
+    }
 
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -28,11 +36,10 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         try {
-            ExchangeRatesDAO dao = new ExchangeRatesDAO();
+            responseGenerator = new ResponseGenerator(response);
 
-            String reqURI = request.getRequestURI(); // принимаем параметры в реквесте
+            String reqURI = request.getRequestURI(); // принимаем параметры из request
             String[] urlParts = reqURI.split("/");
             String param = urlParts[urlParts.length - 1].toUpperCase();
 
@@ -58,11 +65,10 @@ public class ExchangeRateServlet extends HttpServlet {
     }
 
     public void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ResponseGenerator responseGenerator = new ResponseGenerator(response);
         try {
-            ExchangeRatesDAO dao = new ExchangeRatesDAO();
+            responseGenerator = new ResponseGenerator(response);
 
-            String reqURI = request.getRequestURI(); // принимаем параметры в реквесте
+            String reqURI = request.getRequestURI(); // принимаем параметры из request
             String[] urlParts = reqURI.split("/");
             String param = urlParts[urlParts.length - 1].toUpperCase();
             String rateStr = request.getParameter("rate");
