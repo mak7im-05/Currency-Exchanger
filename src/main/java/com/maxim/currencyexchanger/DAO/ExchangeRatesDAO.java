@@ -20,11 +20,10 @@ public class ExchangeRatesDAO implements IExchangeRatesDao {
                 "FROM ExchangeRates\n" +
                 "JOIN Currencies C on C.id = ExchangeRates.basecurrencyid\n" +
                 "JOIN Currencies C2 on C2.id = ExchangeRates.targetcurrencyid";
-        try {
-            Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            ResultSet rs = statement.executeQuery();
+        try (Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet rs = statement.executeQuery();
+        ) {
             while (rs.next()) {
                 ExchangeRatesDTO exRate = new ExchangeRatesDTO(
                         rs.getInt(1),
@@ -56,25 +55,25 @@ public class ExchangeRatesDAO implements IExchangeRatesDao {
                 "JOIN Currencies C on C.id = ExchangeRates.basecurrencyid\n" +
                 "JOIN Currencies C2 on C2.id = ExchangeRates.targetcurrencyid\n" +
                 "WHERE C.Code = ? AND C2.Code = ?";
-        try {
-            Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-
+        try (Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+        ) {
             statement.setString(1, baseCurrencyCode);
             statement.setString(2, targetCurrencyCode);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                exRate = new ExchangeRatesDTO(
-                        rs.getInt(1),
-                        new CurrencyDTO(rs.getInt(2),
-                                rs.getString(3),
-                                rs.getString(4),
-                                rs.getString(5)),
-                        new CurrencyDTO(rs.getInt(6),
-                                rs.getString(7),
-                                rs.getString(8),
-                                rs.getString(9)),
-                        rs.getBigDecimal(10));
+            try (ResultSet rs = statement.executeQuery();) {
+                while (rs.next()) {
+                    exRate = new ExchangeRatesDTO(
+                            rs.getInt(1),
+                            new CurrencyDTO(rs.getInt(2),
+                                    rs.getString(3),
+                                    rs.getString(4),
+                                    rs.getString(5)),
+                            new CurrencyDTO(rs.getInt(6),
+                                    rs.getString(7),
+                                    rs.getString(8),
+                                    rs.getString(9)),
+                            rs.getBigDecimal(10));
+                }
             }
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -86,31 +85,30 @@ public class ExchangeRatesDAO implements IExchangeRatesDao {
     public ExchangeRatesDTO createExchangeRate(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate) throws SQLException {
         String query = "INSERT INTO ExchangeRates (BaseCurrencyID, TargetCurrencyID, Rate) VALUES (?, ?, ?)";
         ExchangeRatesDTO exRate = new ExchangeRatesDTO();
-        PreparedStatement statement;
-        try {
-            Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
-            statement = connection.prepareStatement(query);
+        try (Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);) {
+            int baseCurrencyId = baseCurrency.getId();
+            int targetCurrencyId = targetCurrency.getId();
+
+            statement.setInt(1, baseCurrencyId);
+            statement.setInt(2, targetCurrencyId);
+            statement.setBigDecimal(3, rate);
+
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                throw new SQLException("Currency is exists");
+            }
+
+            try (ResultSet generateId = statement.getGeneratedKeys()) {
+                exRate.setId(generateId.getInt(1));
+            }
+            exRate.setBaseCurrency(baseCurrency);
+            exRate.setTargetCurrency(targetCurrency);
+            exRate.setRate(rate);
         } catch (SQLException e) {
             throw new SQLException("DB failed");
         }
-
-        int baseCurrencyId = baseCurrency.getId();
-        int targetCurrencyId = targetCurrency.getId();
-
-        statement.setInt(1, baseCurrencyId);
-        statement.setInt(2, targetCurrencyId);
-        statement.setBigDecimal(3, rate);
-        try {
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new SQLException("Currency is exists");
-        }
-        ResultSet generateId = statement.getGeneratedKeys();
-
-        exRate.setId(generateId.getInt(1));
-        exRate.setBaseCurrency(baseCurrency);
-        exRate.setTargetCurrency(targetCurrency);
-        exRate.setRate(rate);
         return exRate;
     }
 
@@ -119,13 +117,13 @@ public class ExchangeRatesDAO implements IExchangeRatesDao {
                 "SET rate = ? " +
                 "WHERE (SELECT id FROM currencies WHERE code=?)=BaseCurrencyID " +
                 "AND (SELECT id FROM currencies WHERE code=?)=TargetCurrencyID";
-        Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
-        connection.prepareStatement("PRAGMA journal_mode=WAL").execute();
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setBigDecimal(1, rate);
-        statement.setString(2, baseCurrencyCode);
-        statement.setString(3, targetCurrencyCode);
-        statement.executeUpdate();
+        try (Connection connection = DatabaseConnectionPool.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);) {
+            statement.setBigDecimal(1, rate);
+            statement.setString(2, baseCurrencyCode);
+            statement.setString(3, targetCurrencyCode);
+            statement.executeUpdate();
+        }
     }
 }
 

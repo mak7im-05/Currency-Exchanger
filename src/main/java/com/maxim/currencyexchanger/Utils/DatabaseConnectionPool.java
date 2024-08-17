@@ -19,7 +19,7 @@ public class DatabaseConnectionPool {
         config.setJdbcUrl("jdbc:sqlite:C:/D/study/Currency-Exchanger/src/main/resources/database.db");
         config.setUsername("");
         config.setPassword("");
-        config.setMaximumPoolSize(50);
+        config.setMaximumPoolSize(100);
         config.setIdleTimeout(30000);
         config.setConnectionTimeout(15000);
 
