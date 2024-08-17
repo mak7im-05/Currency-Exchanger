@@ -1,5 +1,6 @@
 package com.maxim.currencyexchanger.DAO;
 
+import com.maxim.currencyexchanger.model.CurrencyDTO;
 import com.maxim.currencyexchanger.model.ExchangeRatesDTO;
 
 import java.math.BigDecimal;
@@ -12,7 +13,7 @@ public interface IExchangeRatesDao {
 
     ExchangeRatesDTO getExchangeRateByCodes(String baseCurrencyCode, String targetCurrencyCode) throws SQLException;
 
-    ExchangeRatesDTO createExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) throws SQLException;
+    ExchangeRatesDTO createExchangeRate(CurrencyDTO baseCurrencyId, CurrencyDTO targetCurrencyId, BigDecimal rate) throws SQLException;
 
     void updateRateFromExRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException;
 }

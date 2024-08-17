@@ -3,7 +3,7 @@
 		"_postman_id": "9e5f350d-b4b8-4abc-b06c-328a172c7700",
 		"name": "REST API basics: CRUD, test & variable",
 		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "35035094"
 	},
 	"item": [
@@ -26,18 +26,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/CurrencyExchanger_war_exploded/currencies",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"CurrencyExchanger_war_exploded",
-						"currencies"
-					]
-				},
+				"url": "http://localhost:8080/CurrencyExchanger_war/currencies",
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 			},
 			"response": []
@@ -47,19 +36,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/CurrencyExchanger_war_exploded/currency/US",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"CurrencyExchanger_war_exploded",
-						"currency",
-						"US"
-					]
-				}
+				"url": "http://localhost:8080/CurrencyExchanger_war/currency/USD"
 			},
 			"response": []
 		},
@@ -75,7 +52,8 @@
 							"});",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -92,12 +70,30 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/info",
+					"raw": "http://localhost:8080/CurrencyExchanger_war/currencies/?name=BAS&code=TAR&sign=1",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
+						"CurrencyExchanger_war",
+						"currencies",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "BAS"
+						},
+						{
+							"key": "code",
+							"value": "TAR"
+						},
+						{
+							"key": "sign",
+							"value": "1"
+						}
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -108,7 +104,8 @@
 			"name": "getExRates",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": "http://localhost:8080/CurrencyExchanger_war/exchangeRates"
 			},
 			"response": []
 		},
@@ -116,7 +113,8 @@
 			"name": "getExRate",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": "http://localhost:8080/CurrencyExchanger_war/exchangeRate/USDUZS"
 			},
 			"response": []
 		},
@@ -126,29 +124,29 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/CurrencyExchanger_war_exploded/exchangeRates/?baseCurrencyCode=USD&targetCurrencyCode=UZS&rate=12.6",
+					"raw": "http://localhost:8080/CurrencyExchanger_war/exchangeRates/?baseCurrencyCode=RUB&targetCurrencyCode=AUD&rate=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"CurrencyExchanger_war_exploded",
+						"CurrencyExchanger_war",
 						"exchangeRates",
 						""
 					],
 					"query": [
 						{
 							"key": "baseCurrencyCode",
-							"value": "USD"
+							"value": "RUB"
 						},
 						{
 							"key": "targetCurrencyCode",
-							"value": "UZS"
+							"value": "AUD"
 						},
 						{
 							"key": "rate",
-							"value": "12.6"
+							"value": "1"
 						}
 					]
 				}
@@ -161,22 +159,22 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/CurrencyExchanger_war_exploded/exchangeRate/USDEVR/?rate=0.99",
+					"raw": "http://localhost:8080/CurrencyExchanger_war/exchangeRate/USDRUB/?rate=1.5",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"CurrencyExchanger_war_exploded",
+						"CurrencyExchanger_war",
 						"exchangeRate",
-						"USDEVR",
+						"USDRUB",
 						""
 					],
 					"query": [
 						{
 							"key": "rate",
-							"value": "0.99"
+							"value": "1.5"
 						}
 					]
 				}
@@ -187,7 +185,33 @@
 			"name": "getExchange",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/CurrencyExchanger_war/exchange?from=USD&to=UZS&amount=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"CurrencyExchanger_war",
+						"exchange"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "USD"
+						},
+						{
+							"key": "to",
+							"value": "UZS"
+						},
+						{
+							"key": "amount",
+							"value": "10"
+						}
+					]
+				}
 			},
 			"response": []
 		}

@@ -19,9 +19,9 @@ public class DatabaseConnectionPool {
         config.setJdbcUrl("jdbc:sqlite:C:/D/study/Currency-Exchanger/src/main/resources/database.db");
         config.setUsername("");
         config.setPassword("");
-        config.setMaximumPoolSize(10);
-        config.setIdleTimeout(60000);
-        config.setConnectionTimeout(30000);
+        config.setMaximumPoolSize(50);
+        config.setIdleTimeout(30000);
+        config.setConnectionTimeout(15000);
 
         dataSource = new HikariDataSource(config);
 
