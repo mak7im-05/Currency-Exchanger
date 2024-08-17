@@ -76,17 +76,3 @@ public class CurrenciesDAO implements ICurrenciesDAO {
         return currency;
     }
 }
-
-
-//README.md
-//Дублирование кода вместо использования filter для установки заголовков ответов во всех servlets - content-type и character encoding
-//LomBOk DONE
-// тесты для postExRates
-//проблема с exceptions
-//бизнес логика в DAO
-// интерфейсы
-//Реализовать connection pool вместо того чтобы открывать по новому соединению на каждую SQL операцию
-
-//Использовать MapStruct или ModelMapper, чтобы совершать преобразования между классами-моделями и DTO
-// deploy
-//вынести в private поля DAO и RespGen

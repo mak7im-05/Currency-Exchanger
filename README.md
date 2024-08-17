@@ -1,4 +1,4 @@
-<h1 align="center">Currency Exchange</h1>
+<h1 align="">Currency Exchange</h1>
 
 ![Java](https://img.shields.io/badge/java-black.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Jakarta EE](https://img.shields.io/badge/jakarta_ee-black?style=for-the-badge&labelColor=white)

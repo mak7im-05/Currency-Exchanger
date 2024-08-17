@@ -51,8 +51,10 @@ public class ExchangeRatesServlet extends HttpServlet {
                 responseGenerator.currencyPairIsNotExist();
                 return;
             }
+            int baseCurrencyId = baseCurrency.getId();
+            int targetCurrencyId = targetCurrency.getId();
 
-            ExchangeRatesDTO createdExRate = exchangeRatesDAO.createExchangeRate(baseCurrency.getId(), targetCurrency.getId(), rate);
+            ExchangeRatesDTO createdExRate = exchangeRatesDAO.createExchangeRate(baseCurrencyId, targetCurrencyId, rate);
 
             createdExRate.setBaseCurrency(baseCurrency);
             createdExRate.setTargetCurrency(targetCurrency);

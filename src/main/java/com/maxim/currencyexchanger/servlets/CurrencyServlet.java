@@ -26,7 +26,7 @@ public class CurrencyServlet extends HttpServlet {
         try {
             responseGenerator = new ResponseGenerator(response);
 
-            String reqURI = request.getRequestURI(); // принимаем параметры в реквесте
+            String reqURI = request.getRequestURI(); // принимаем параметры в request
             String[] urlParts = reqURI.split("/");
             String targetCurrencyCode = urlParts[urlParts.length - 1].toUpperCase();
 

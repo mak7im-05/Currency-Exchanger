@@ -13,7 +13,7 @@ public class ConnectDB {
 
     public ConnectDB() throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
-        String url = "jdbc:sqlite:C:/D/study/CurrencyExchanger/src/main/resources/mydb.db";
+        String url = "jdbc:sqlite:C:/D/study/CurrencyExchanger/src/main/resources/database.db";
         try {
             connection = DriverManager.getConnection(url);
         } catch (SQLException e) {
