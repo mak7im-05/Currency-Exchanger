@@ -34,8 +34,8 @@ public class ExchangeRatesServlet extends HttpServlet {
         try {
             responseGenerator = new ResponseGenerator(response);
 
-            String baseCurrencyCode = request.getParameter("baseCurrencyCode");
-            String targetCurrencyCode = request.getParameter("targetCurrencyCode");
+            String baseCurrencyCode = request.getParameter("baseCurrencyCode").toUpperCase();
+            String targetCurrencyCode = request.getParameter("targetCurrencyCode").toUpperCase();
             String rateStr = request.getParameter("rate");
 
             if (isInvalidParameters(baseCurrencyCode, targetCurrencyCode, rateStr)) {
@@ -78,7 +78,7 @@ public class ExchangeRatesServlet extends HttpServlet {
     }
 
     private boolean isInvalidParameters(String baseCurrencyCode, String targetCurrencyCode, String rateStr) {
-        return baseCurrencyCode == null || targetCurrencyCode == null || rateStr == null;
+        return baseCurrencyCode == null || targetCurrencyCode == null || rateStr == null || baseCurrencyCode.isEmpty() || targetCurrencyCode.isEmpty() || rateStr.isEmpty();
     }
 
 }

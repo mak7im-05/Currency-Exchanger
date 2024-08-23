@@ -14,8 +14,8 @@ public class ExchangeRatesDAO implements IExchangeRatesDao {
     public List<ExchangeRatesDTO> getExchangeRates() throws SQLException {
         List<ExchangeRatesDTO> exRates = new ArrayList<>();
         String query = "SELECT ExchangeRates.id, " +
-                "C.id, C.code, C.fullname, C.sign, " +
-                "C2.id, C2.code, C2.fullname, C2.sign, " +
+                "C.id, C.fullname, C.code, C.sign, " +
+                "C2.id, C2.fullname, C2.code, C2.sign, " +
                 "ExchangeRates.rate\n" +
                 "FROM ExchangeRates\n" +
                 "JOIN Currencies C on C.id = ExchangeRates.basecurrencyid\n" +
@@ -48,8 +48,8 @@ public class ExchangeRatesDAO implements IExchangeRatesDao {
     public ExchangeRatesDTO getExchangeRateByCodes(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         ExchangeRatesDTO exRate = null;
         String query = "SELECT ExchangeRates.id, " +
-                "C.id, C.code, C.fullname, C.sign, " +
-                "C2.id, C2.code, C2.fullname, C2.sign, " +
+                "C.id, C.fullname, C.code, C.sign, " +
+                "C2.id, C2.fullname, C2.code, C2.sign, " +
                 "ExchangeRates.rate\n" +
                 "FROM ExchangeRates\n" +
                 "JOIN Currencies C on C.id = ExchangeRates.basecurrencyid\n" +
@@ -107,7 +107,11 @@ public class ExchangeRatesDAO implements IExchangeRatesDao {
             exRate.setTargetCurrency(targetCurrency);
             exRate.setRate(rate);
         } catch (SQLException e) {
-            throw new SQLException("DB failed");
+            if (e.getMessage().equals("Currency is exists")) {
+                throw new SQLException(e.getMessage());
+            } else {
+                throw new SQLException("DB failed");
+            }
         }
         return exRate;
     }

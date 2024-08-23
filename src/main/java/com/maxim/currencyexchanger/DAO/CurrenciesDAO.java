@@ -65,11 +65,15 @@ public class CurrenciesDAO implements ICurrenciesDAO {
                 throw new SQLException("Currency is exists");
             }
 
-            try (ResultSet generateId = statement.getGeneratedKeys();) {
+            try (ResultSet generateId = statement.getGeneratedKeys()) {
                 currency.setId(generateId.getInt(1));
             }
         } catch (SQLException e) {
-            throw new SQLException("DB failed");
+            if (e.getMessage().equals("Currency is exists")) {
+                throw new SQLException(e.getMessage());
+            } else {
+                throw new SQLException("DB failed");
+            }
         }
         return currency;
     }

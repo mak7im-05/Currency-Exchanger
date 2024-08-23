@@ -16,7 +16,7 @@ public class DatabaseConnectionPool {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        config.setJdbcUrl("jdbc:sqlite:C:/D/study/Currency-Exchanger/src/main/resources/database.db");
+        config.setJdbcUrl("jdbc:sqlite::resource:database.db");
         config.setUsername("");
         config.setPassword("");
         config.setMaximumPoolSize(100);

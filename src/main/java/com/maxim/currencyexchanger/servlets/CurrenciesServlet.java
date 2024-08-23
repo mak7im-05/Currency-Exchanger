@@ -28,7 +28,7 @@ public class CurrenciesServlet extends HttpServlet {
             responseGenerator = new ResponseGenerator(response);
 
             String name = request.getParameter("name");
-            String code = request.getParameter("code");
+            String code = request.getParameter("code").toUpperCase();
             String sign = request.getParameter("sign");
 
             if (isInvalidParameters(name, code, sign)) { //проверка полей параметров
@@ -64,7 +64,7 @@ public class CurrenciesServlet extends HttpServlet {
     }
 
     private boolean isInvalidParameters(String name, String code, String sign) {
-        return name == null || code == null || sign == null;
+        return name == null || code == null || sign == null || name.isEmpty() || code.isEmpty() || sign.isEmpty();
     }
 }
 

@@ -80,11 +80,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
             BigDecimal rate = new BigDecimal(rateStr);
 
-            if (param.length() != 6) {
-                responseGenerator.misField();
-                return;
-            }
-
             String baseCurrencyCode = param.substring(0, 3);
             String targetCurrencyCode = param.substring(3);
 
