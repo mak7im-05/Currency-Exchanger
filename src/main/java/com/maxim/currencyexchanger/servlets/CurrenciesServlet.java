@@ -64,7 +64,7 @@ public class CurrenciesServlet extends HttpServlet {
     }
 
     private boolean isInvalidParameters(String name, String code, String sign) {
-        return name == null || code == null || sign == null || name.isEmpty() || code.isEmpty() || sign.isEmpty();
+        return name == null || code == null || sign == null || name.isEmpty() || code.isEmpty() || sign.isEmpty() || name.contains("&") ||code.contains("&") || sign.contains("&");
     }
 }
 
