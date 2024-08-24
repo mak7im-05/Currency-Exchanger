@@ -23,8 +23,6 @@ public class ExchangeServlet extends HttpServlet {
     private CurrenciesDAO currenciesDAO;
     private ResponseGenerator responseGenerator;
 
-    private final int TRUE = 1;
-
     @Override
     public void init(ServletConfig config) {
         exchangeRatesDAO = new ExchangeRatesDAO();
@@ -47,7 +45,7 @@ public class ExchangeServlet extends HttpServlet {
 
             BigDecimal amount = new BigDecimal(amountStr);
 
-            if (amount.compareTo(new BigDecimal("0")) != TRUE) {
+            if (bigDecimalIsPositive(amount)) {
                 responseGenerator.misField();
                 return;
             }
@@ -62,8 +60,8 @@ public class ExchangeServlet extends HttpServlet {
             // дальше идет вроде бизнес-логика и должно находиться в service class, но из-за не большого кол-во строчек кода решил оставить здесь
             ExchangeRatesDTO exRateForward = exchangeRatesDAO.getExchangeRateByCodes(baseCurrencyCode, targetCurrencyCode); // первый случай AB
             ExchangeRatesDTO exRateReverse = exchangeRatesDAO.getExchangeRateByCodes(targetCurrencyCode, baseCurrencyCode); //второй случай BA
-            ExchangeRatesDTO usd_A = exchangeRatesDAO.getExchangeRateByCodes("USD", baseCurrencyCode); // 3 случай USD - A & USD - B
-            ExchangeRatesDTO usd_B = exchangeRatesDAO.getExchangeRateByCodes("USD", targetCurrencyCode); //все остальные случаи опускаются
+            ExchangeRatesDTO usdA = exchangeRatesDAO.getExchangeRateByCodes("USD", baseCurrencyCode); // 3 случай USD - A & USD - B
+            ExchangeRatesDTO usdB = exchangeRatesDAO.getExchangeRateByCodes("USD", targetCurrencyCode); //все остальные случаи опускаются
 
             BigDecimal convertedAmount;
             BigDecimal rate;
@@ -73,11 +71,11 @@ public class ExchangeServlet extends HttpServlet {
             } else if (exRateReverse != null) {
                 rate = new BigDecimal("1").divide(exRateReverse.getRate(), 2, RoundingMode.HALF_UP); // 2 случай (считаем обратный курс 1/rate)
                 convertedAmount = rate.multiply(amount).setScale(2, RoundingMode.HALF_UP);
-            } else if (usd_A != null && usd_B != null) { // 3 случай
-                rate = new BigDecimal("1").divide(usd_A.getRate(), 2, RoundingMode.HALF_UP); // A - USD
+            } else if (usdA != null && usdB != null) { // 3 случай
+                rate = new BigDecimal("1").divide(usdA.getRate(), 2, RoundingMode.HALF_UP); // A - USD
                 convertedAmount = rate.multiply(amount).setScale(2, RoundingMode.HALF_UP);
 
-                rate = usd_B.getRate();
+                rate = usdB.getRate();
                 convertedAmount = rate.multiply(convertedAmount).setScale(2, RoundingMode.HALF_UP); // USD - B
 
                 rate = convertedAmount.divide(amount, 2, RoundingMode.HALF_UP); // подсчет нового курса
@@ -98,6 +96,10 @@ public class ExchangeServlet extends HttpServlet {
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         }
+    }
+
+    private boolean bigDecimalIsPositive(BigDecimal amount) {
+        return amount.compareTo(new BigDecimal("0")) > 0;
     }
 
     private boolean invalidParameters(String baseCurrencyCode, String targetCurrencyCode, String amountStr) {

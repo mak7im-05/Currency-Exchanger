@@ -71,12 +71,14 @@ public class ExchangeRateServlet extends HttpServlet {
             String reqURI = request.getRequestURI(); // принимаем параметры из request
             String[] urlParts = reqURI.split("/");
             String param = urlParts[urlParts.length - 1].toUpperCase();
-            String rateStr = request.getParameter("rate");
+            String rateParameter = request.getReader().readLine();
+            String rateStr = rateParameter.replace("rate=", "");
 
-            if (rateStr == null) {
+            if (rateStr.isEmpty()) {
                 responseGenerator.misField();
                 return;
             }
+
 
             BigDecimal rate = new BigDecimal(rateStr);
 
@@ -84,14 +86,8 @@ public class ExchangeRateServlet extends HttpServlet {
             String targetCurrencyCode = param.substring(3);
 
             dao.updateRateFromExRate(baseCurrencyCode, targetCurrencyCode, rate);
-            ExchangeRatesDTO updatedExRate = dao.getExchangeRateByCodes(baseCurrencyCode, targetCurrencyCode);
 
-            if (updatedExRate == null) {
-                responseGenerator.currencyPairIsNotExist();
-                return;
-            }
-
-            responseGenerator.successResponseGenerator(updatedExRate, 200);
+            doGet(request, response);
         } catch (SQLException e) {
             responseGenerator.DBisNotFound();
         }
