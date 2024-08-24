@@ -1,17 +1,19 @@
-<h1 align="">Currency Exchange</h1>
+# 📈 Проект "Currency Exchange"
 
-![Java](https://img.shields.io/badge/java-black.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-![Jakarta EE](https://img.shields.io/badge/jakarta_ee-black?style=for-the-badge&labelColor=white)
-![Static Badge](https://img.shields.io/badge/mvc(s)-black?style=for-the-badge&labelColor=white)
-![SQLite](https://img.shields.io/badge/sqlite-black.svg?style=for-the-badge&logo=sqlite&logoColor=white)
-![JDBC](https://img.shields.io/badge/jdbc-black?style=for-the-badge&labelColor=white)
-![HTTP](https://img.shields.io/badge/http-black?style=for-the-badge&labelColor=white)
-![Rest Api](https://img.shields.io/badge/REST%20API-black?style=for-the-badge&labelColor=white)
-![JSON](https://img.shields.io/badge/json-black?style=for-the-badge&labelColor=white)
-![Apache Maven](https://img.shields.io/badge/Apache%20Maven-black?style=for-the-badge&logo=Apache%20Maven&logoColor=white)
-![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
-![Postman](https://img.shields.io/badge/postman-black?style=for-the-badge&logo=postman&logoColor=white)
+## 📝 Описание проекта
+"Currency Exchange" - это REST API для работы с валютами и обменными курсами. Проект реализует CRUD операции для валют и обменных курсов, а также предоставляет возможность конвертации валют.
 
+## 💻 Технологии
+В проекте используются следующие технологии:
+
+- ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white) **Java** - основной язык программирования.
+- ![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white) **Maven** - инструмент для управления зависимостями и сборки проекта.
+- ![Servlets](https://img.shields.io/badge/Servlets-4B8BBE?style=for-the-badge&logo=java&logoColor=white) **Java Servlets** - для обработки HTTP-запросов.
+- ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white) **SQLite** - база данных для хранения информации о валютах и курсах.
+- ![Tomcat](https://img.shields.io/badge/Tomcat-F8DC75?style=for-the-badge&logo=apache-tomcat&logoColor=black) **Apache Tomcat** - сервер для развертывания веб-приложений.
+- ![JDBC](https://img.shields.io/badge/JDBC-4479A1?style=for-the-badge&logo=java&logoColor=white) **JDBC** - для взаимодействия с базой данных.
+- ![JSON](https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white) **JSON** - формат обмена данными.
+- ![Static Badge](https://img.shields.io/badge/mvc(s)-black?style=for-the-badge&labelColor=white) **MVC(S)** - паттерн проектирования
 
 ### О проекте
 REST API для описания валют и обменных курсов. Позволяет просматривать и редактировать списки валют и обменных курсов, и совершать расчёт конвертации произвольных сумм из одной валюты в другую. Веб-интерфейс для проекта не подразумевается.
